@@ -11,7 +11,7 @@ public class Movement : MonoBehaviour
     [SerializeField] Transform cam;
     [SerializeField] float sprintRate=1.5f;
     [SerializeField] float crouchRate=0.5f;
-    Animator anim;
+    //Animator anim;
 
     float turnSmoothTime = 0.1f;
     float turnSmoothVelocity;
@@ -31,7 +31,7 @@ public class Movement : MonoBehaviour
     {
         tempSpeed = speed;
         rb = GetComponent<Rigidbody>();
-        anim = GetComponent<Animator>();
+        //anim = GetComponentInChildren<Animator>();
     }
     private void FixedUpdate()
     {
@@ -85,10 +85,10 @@ public class Movement : MonoBehaviour
        
 
         
-        anim.SetFloat(velocityX, rb.velocity.x);
+       /* anim.SetFloat(velocityX, rb.velocity.x);
         anim.SetFloat(velocityZ, rb.velocity.z);
         anim.SetBool(isCrouch, isCrouching);
-        Debug.Log(rb.velocity.x + " " + rb.velocity.z);
+        Debug.Log(rb.velocity.x + " " + rb.velocity.z);*/
     }
     
 
