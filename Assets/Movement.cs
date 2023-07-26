@@ -5,19 +5,21 @@ using UnityEngine.UIElements;
 
 public class Movement : MonoBehaviour
 {
-    [SerializeField] float speed = 10;
-    [SerializeField] float maxSpeed=20;
+    [SerializeField] float acceleration = 10;
+    [SerializeField] float speed=20;
     [SerializeField] float jumpForce = 15;
     [SerializeField] Transform cam;
-    [SerializeField] Animator anim;
+    [SerializeField] float sprintRate=1.5f;
+    [SerializeField] float crouchRate=0.5f;
+    Animator anim;
 
     float turnSmoothTime = 0.1f;
     float turnSmoothVelocity;
     float targetAngle;
     float angle;
-    float tempMaxSpeed;
+    float tempSpeed;
     bool isCrouching;
-
+    
     string velocityX = "VelocityX";
     string velocityZ = "VelocityZ";
     string isCrouch = "IsCrouch";
@@ -27,13 +29,14 @@ public class Movement : MonoBehaviour
 
     void Start()
     {
-        tempMaxSpeed = maxSpeed;
-       rb = GetComponent<Rigidbody>();
+        tempSpeed = speed;
+        rb = GetComponent<Rigidbody>();
+        anim = GetComponent<Animator>();
     }
     private void FixedUpdate()
     {
 
-        Vector3 direction = new Vector3(Input.GetAxisRaw("Horizontal"), 0f, Input.GetAxisRaw("Vertical")).normalized;
+        Vector3 direction = new Vector3(Input.GetAxisRaw("Horizontal"), 0f, Input.GetAxisRaw("Vertical"));
 
         if (direction.magnitude >= 0.1f)
 
@@ -45,9 +48,9 @@ public class Movement : MonoBehaviour
             transform.rotation = Quaternion.Euler(0f,angle, 0f);
 
             moveDir = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
-            rb.AddRelativeForce(direction* speed, ForceMode.Force);
+            rb.AddRelativeForce(direction* acceleration, ForceMode.Force);
             
-            rb.velocity = Vector3.ClampMagnitude(rb.velocity, maxSpeed);
+            rb.velocity = Vector3.ClampMagnitude(rb.velocity, speed);
 
            
         }
@@ -58,7 +61,7 @@ public class Movement : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.LeftShift))
         {
-            maxSpeed = tempMaxSpeed * 1.5f;
+            speed = tempSpeed * sprintRate;
         }
         else if (Input.GetKeyDown(KeyCode.C))
         {
@@ -67,25 +70,25 @@ public class Movement : MonoBehaviour
         }
         else
         {
-            maxSpeed = tempMaxSpeed;
+            speed = tempSpeed;
         }
 
         if (isCrouching)
         {
-            maxSpeed = tempMaxSpeed * 0.5f;
+            speed = tempSpeed * crouchRate;
         }
         if (Input.GetKeyDown(KeyCode.Space))
         {
             rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
         }
 
-        Vector2 noramalizedSpeed = new Vector2(rb.velocity.x, rb.velocity.z).normalized;
+       
 
-        Debug.Log(noramalizedSpeed.x + "   " + noramalizedSpeed.y);
-        anim.SetFloat(velocityX, noramalizedSpeed.x);
-        anim.SetFloat(velocityZ, noramalizedSpeed.y);
+        
+        anim.SetFloat(velocityX, rb.velocity.x);
+        anim.SetFloat(velocityZ, rb.velocity.z);
         anim.SetBool(isCrouch, isCrouching);
-
+        Debug.Log(rb.velocity.x + " " + rb.velocity.z);
     }
     
 
