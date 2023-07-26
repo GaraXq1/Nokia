@@ -11,14 +11,17 @@ public class Movement : MonoBehaviour
     [SerializeField] Transform cam;
     [SerializeField] float sprintRate=1.5f;
     [SerializeField] float crouchRate=0.5f;
-    //Animator anim;
+    Animator anim;
 
     float turnSmoothTime = 0.1f;
     float turnSmoothVelocity;
     float targetAngle;
     float angle;
     float tempSpeed;
+    float horizontal;
+    float vertical;
     bool isCrouching;
+    bool isRuning;
     
     string velocityX = "VelocityX";
     string velocityZ = "VelocityZ";
@@ -26,17 +29,20 @@ public class Movement : MonoBehaviour
 
     Rigidbody rb;
     Vector3 moveDir;
+    Vector2 moveAnimation;
+    Vector3 relative;
 
     void Start()
     {
         tempSpeed = speed;
         rb = GetComponent<Rigidbody>();
-        //anim = GetComponentInChildren<Animator>();
+        anim = GetComponentInChildren<Animator>();
     }
     private void FixedUpdate()
     {
-
-        Vector3 direction = new Vector3(Input.GetAxisRaw("Horizontal"), 0f, Input.GetAxisRaw("Vertical"));
+        horizontal = Input.GetAxisRaw("Horizontal");
+        vertical = Input.GetAxisRaw("Vertical");
+        Vector3 direction = new Vector3(horizontal, 0f, vertical);
 
         if (direction.magnitude >= 0.1f)
 
@@ -59,17 +65,21 @@ public class Movement : MonoBehaviour
     }
     private void Update()
     {
+        relative = transform.InverseTransformDirection(Vector3.forward);
+        Debug.Log(relative);
         if (Input.GetKey(KeyCode.LeftShift))
         {
             speed = tempSpeed * sprintRate;
+            isRuning = true;
         }
         else if (Input.GetKeyDown(KeyCode.C))
         {
             isCrouching = !isCrouching;
-           
+            isRuning = false;
         }
         else
         {
+            isRuning = false;
             speed = tempSpeed;
         }
 
@@ -82,15 +92,31 @@ public class Movement : MonoBehaviour
             rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
         }
 
-       
+        Animation();
 
-        
-       /* anim.SetFloat(velocityX, rb.velocity.x);
-        anim.SetFloat(velocityZ, rb.velocity.z);
-        anim.SetBool(isCrouch, isCrouching);
-        Debug.Log(rb.velocity.x + " " + rb.velocity.z);*/
     }
-    
+
+    private void Animation()
+    {
+
+        if (isRuning)
+        {
+            moveAnimation = new(horizontal * 2, vertical * 2);
+        }
+        else if (isCrouching)
+        {
+            moveAnimation = new(horizontal / 2, vertical / 2);
+        }
+        else
+        {
+            moveAnimation = new(horizontal, vertical);
+        }
+
+        //Debug.Log(moveAnimation);
+        anim.SetFloat(velocityX, moveAnimation.x);
+        anim.SetFloat(velocityZ, moveAnimation.y);
+        anim.SetBool(isCrouch, isCrouching);
+    }
 
 
 }
