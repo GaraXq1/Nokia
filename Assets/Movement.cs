@@ -15,7 +15,7 @@ public class Movement : MonoBehaviour
     [SerializeField] Transform cameraTransform;
 
     // Rotation speed multiplier
-    [SerializeField] float rotationSpeed = 5f;
+    //[SerializeField] float rotationSpeed = 5f;
     Animator anim;
     float tempSpeed;
     bool isCrouching;
@@ -92,7 +92,7 @@ public class Movement : MonoBehaviour
         anim.SetFloat(velocityX, rb.velocity.x);
         anim.SetFloat(velocityZ, rb.velocity.z);
         anim.SetBool(isCrouch, isCrouching);
-        Debug.Log(rb.velocity.x + " " + rb.velocity.z);
+        
     }
     
 
