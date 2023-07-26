@@ -4,29 +4,29 @@ using UnityEngine;
 
 public class Movement : MonoBehaviour
 {
-    [SerializeField]
-    float speed= 10;
-    [SerializeField]
-    float jumpForce=15;
-    Rigidbody rb;
-
-    Vector3 dir;
-    // Start is called before the first frame update
+    [SerializeField] Transform cam;
+    CharacterController controller;
+    float speed = 6f;
+    float turnSmoothTime = 0.1f;
+    float turnSmoothVelocity;
     void Start()
     {
-        rb=GetComponent<Rigidbody>();
+        controller = GetComponent<CharacterController>();
     }
-
-    // Update is called once per frame
-    void Update()
+    private void FixedUpdate()
     {
-        dir = new (Input.GetAxisRaw("Horizontal"),0f,Input.GetAxisRaw("Vertical"));
-        rb.velocity = new (dir.x*speed,rb.velocity.y,dir.z*speed);
-        if (Input.GetButton("Jump"))
+        float horizontal = Input.GetAxisRaw("Horizontal");
+        float vertical = Input.GetAxisRaw("Vertical");
+        Vector3 direction = new Vector3(horizontal, 0f, vertical).normalized;
+
+        if (direction.magnitude >= 0.1f)
         {
+            float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + cam.eulerAngles.y;
+            float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);
+            transform.rotation = Quaternion.Euler(0f, angle, 0f);
 
-            rb.velocity=new (rb.velocity.x, jumpForce, rb.velocity.z);
+            Vector3 moveDir = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
+            controller.Move(moveDir.normalized * speed * Time.deltaTime);
         }
-
     }
 }
