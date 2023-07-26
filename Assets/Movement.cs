@@ -1,32 +1,80 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class Movement : MonoBehaviour
 {
     [SerializeField]
-    float speed= 10;
+    float speed = 10;
     [SerializeField]
-    float jumpForce=15;
+    float maxSpeed=20;
+    [SerializeField]
+    float jumpForce = 15;
+    [SerializeField]
+    Transform cam;
     Rigidbody rb;
+    float turnSmoothTime = 0.1f;
+    float turnSmoothVelocity;
+    float targetAngle;
+    float angle;
+    float tempMaxSpeed;
+    bool isCrouching;
+    Vector3 moveDir;
 
-    Vector3 dir;
-    // Start is called before the first frame update
     void Start()
     {
-        rb=GetComponent<Rigidbody>();
+        tempMaxSpeed = maxSpeed;
+       rb = GetComponent<Rigidbody>();
     }
-
-    // Update is called once per frame
-    void Update()
+    private void FixedUpdate()
     {
-        dir = new (Input.GetAxisRaw("Horizontal"),0f,Input.GetAxisRaw("Vertical"));
-        rb.velocity = new (dir.x*speed,rb.velocity.y,dir.z*speed);
-        if (Input.GetButton("Jump"))
-        {
 
-            rb.velocity=new (rb.velocity.x, jumpForce, rb.velocity.z);
+        Vector3 direction = new Vector3(Input.GetAxisRaw("Horizontal"), 0f, Input.GetAxisRaw("Vertical")).normalized;
+
+        if (direction.magnitude >= 0.1f)
+
+        {
+            
+
+            targetAngle =  cam.eulerAngles.y;
+            angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);
+            transform.rotation = Quaternion.Euler(0f,angle, 0f);
+
+            moveDir = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
+            rb.AddRelativeForce(direction* speed, ForceMode.Force);
+            
+            rb.velocity = Vector3.ClampMagnitude(rb.velocity, maxSpeed);
+
+           
+        }
+       
+
+    }
+    private void Update()
+    {
+        if (Input.GetKey(KeyCode.LeftShift))
+        {
+            maxSpeed = tempMaxSpeed * 1.5f;
+        }
+        else if (Input.GetKeyDown(KeyCode.C))
+        {
+            isCrouching = !isCrouching;
+           
+        }
+        else
+        {
+            maxSpeed = tempMaxSpeed;
         }
 
+        if (isCrouching)
+        {
+            maxSpeed = tempMaxSpeed * 0.5f;
+        }
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+        }
     }
+
 }
