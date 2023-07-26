@@ -5,21 +5,24 @@ using UnityEngine.UIElements;
 
 public class Movement : MonoBehaviour
 {
-    [SerializeField]
-    float speed = 10;
-    [SerializeField]
-    float maxSpeed=20;
-    [SerializeField]
-    float jumpForce = 15;
-    [SerializeField]
-    Transform cam;
-    Rigidbody rb;
+    [SerializeField] float speed = 10;
+    [SerializeField] float maxSpeed=20;
+    [SerializeField] float jumpForce = 15;
+    [SerializeField] Transform cam;
+    [SerializeField] Animator anim;
+
     float turnSmoothTime = 0.1f;
     float turnSmoothVelocity;
     float targetAngle;
     float angle;
     float tempMaxSpeed;
     bool isCrouching;
+
+    string velocityX = "VelocityX";
+    string velocityZ = "VelocityZ";
+    string isCrouch = "IsCrouch";
+
+    Rigidbody rb;
     Vector3 moveDir;
 
     void Start()
@@ -75,6 +78,16 @@ public class Movement : MonoBehaviour
         {
             rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
         }
+
+        Vector2 noramalizedSpeed = new Vector2(rb.velocity.x, rb.velocity.z).normalized;
+
+        Debug.Log(noramalizedSpeed.x + "   " + noramalizedSpeed.y);
+        anim.SetFloat(velocityX, noramalizedSpeed.x);
+        anim.SetFloat(velocityZ, noramalizedSpeed.y);
+        anim.SetBool(isCrouch, isCrouching);
+
     }
+    
+
 
 }
