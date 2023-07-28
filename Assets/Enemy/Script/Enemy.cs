@@ -23,6 +23,7 @@ public class Enemy : MonoBehaviour
             float angleToPlayer = Vector3.Angle(transform.forward, directionToPlayer.normalized);
             if (distanceToPlayer < detectionDistance && angleToPlayer < detectionAngle)
             {
+                
                 // Player detected, implement behavior here
                 Debug.Log("Player detected!");
             }
