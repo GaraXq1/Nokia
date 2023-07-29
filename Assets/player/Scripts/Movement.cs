@@ -15,7 +15,6 @@ public class Movement : MonoBehaviour
     [SerializeField] float rotationSpeed = 5f;
     Rigidbody rb;
     Animator anim;
-    Vector3 moveDir;
     float tempSpeed;
     bool isCrouching;
     float horizontal;
@@ -25,8 +24,7 @@ public class Movement : MonoBehaviour
     string velocityX = "VelocityX";
     string velocityZ = "VelocityZ";
     string isCrouch = "IsCrouch";
-    float turnSmoothTime = 0.1f;
-    float turnSmoothVelocity;
+
     
     
     void Start()
@@ -56,7 +54,6 @@ public class Movement : MonoBehaviour
     private void mainMovement(Vector3 direction)
     {
         rb.AddRelativeForce(direction * acceleration, ForceMode.Force);
-
         rb.velocity = Vector3.ClampMagnitude(rb.velocity, speed);
     }
 
