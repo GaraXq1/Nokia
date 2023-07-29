@@ -23,7 +23,7 @@ public class Enemy : MonoBehaviour
             float angleToPlayer = Vector3.Angle(transform.forward, directionToPlayer.normalized);
             if (distanceToPlayer < detectionDistance && angleToPlayer < detectionAngle)
             {
-                
+                transform.rotation = Quaternion.Euler(0f, angleToPlayer, 0f);
                 // Player detected, implement behavior here
                 Debug.Log("Player detected!");
             }

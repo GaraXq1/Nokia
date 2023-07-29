@@ -7,13 +7,13 @@ public class Movement : MonoBehaviour
 {
 
     [SerializeField] float acceleration = 10;
-    [SerializeField] float speed=20;
+    [SerializeField] float speed = 20;
     [SerializeField] float jumpForce = 15;
-    [SerializeField] float sprintRate=1.5f;
-    [SerializeField] float crouchRate=0.5f;
+    [SerializeField] float sprintRate = 1.5f;
+    [SerializeField] float crouchRate = 0.5f;
     [SerializeField] Transform cam;
-    [SerializeField] float rotationSpeed = 5f;
- 
+    
+
     Animator anim;
     float tempSpeed;
     bool isCrouching;
@@ -27,11 +27,11 @@ public class Movement : MonoBehaviour
     float turnSmoothTime = 0.1f;
     float turnSmoothVelocity;
     Rigidbody rb;
-    Vector3 moveDir;
     
 
 
-    
+
+
     void Start()
     {
         tempSpeed = speed;
@@ -51,11 +51,11 @@ public class Movement : MonoBehaviour
             Vector3 moveDir = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
             rb.AddRelativeForce(moveDir * acceleration, ForceMode.Force);
         }
-       
+
         rb.velocity = Vector3.ClampMagnitude(rb.velocity, speed);
         xVel = transform.InverseTransformDirection(rb.velocity).x;
         zVel = transform.InverseTransformDirection(rb.velocity).z;
-        Debug.Log(xVel+" "+zVel);
+        Debug.Log(xVel + " " + zVel);
     }
     private void Update()
     {
@@ -85,7 +85,7 @@ public class Movement : MonoBehaviour
             {
                 speed = tempSpeed * 0.5f;
             }
-            speed = Mathf.Lerp(speed, tempSpeed, Time.deltaTime*3);
+            speed = Mathf.Lerp(speed, tempSpeed, Time.deltaTime * 3);
         }
 
         if (isCrouching)
@@ -96,16 +96,16 @@ public class Movement : MonoBehaviour
         {
             rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
         }
-        
 
 
-        
+
+
         anim.SetFloat(velocityX, xVel);
         anim.SetFloat(velocityZ, zVel);
         anim.SetBool(isCrouch, isCrouching);
-        
+
     }
-    
+
 
 
 }
