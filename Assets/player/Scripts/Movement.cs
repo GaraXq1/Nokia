@@ -10,11 +10,10 @@ public class Movement : MonoBehaviour
     [SerializeField] float crouchSpeed = 1.5f;
     [SerializeField] float gravity = -20f;
     [SerializeField] float jumpSpeed = 15;
-    [SerializeField] Transform cam;
     CharacterController controller;
     Animator anim;
     Vector3 direction;
-    Vector3 moveDir;
+
 
     bool isCrouch = false;
     float animSpeed = 1;
@@ -22,8 +21,7 @@ public class Movement : MonoBehaviour
     float vertical;
     float horizontal;
     float coolDownSpeed = 5;
-    float turnSmoothTime = 0.1f;
-    float turnSmoothVelocity;
+
 
     const string Speed = "Speed";
     const string Jump = "Jumping";
@@ -53,16 +51,9 @@ public class Movement : MonoBehaviour
                 direction.y = jumpSpeed;
             }
         }
-        if(direction.magnitude >= 0.1f)
-        {
-            float targetAngle = Mathf.Atan2(direction.x,direction.z) * Mathf.Rad2Deg + cam.eulerAngles.y;
-            float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);
-            transform.rotation = Quaternion.Euler(0f, angle, 0f);
 
-            moveDir = Quaternion.Euler(0f, angle, 0f) * Vector3.forward;
-        }
         direction.y += gravity * Time.deltaTime;
-        controller.Move(moveDir * Time.deltaTime);
+        controller.Move(direction * Time.deltaTime);
         Sprint();
         Crouch();
         if(!isCrouch && !Input.GetKey(KeyCode.LeftShift))
@@ -79,7 +70,7 @@ public class Movement : MonoBehaviour
         {
             if (!isCrouch)
             {
-                HandleMovement(crouchSpeed, 3f, 2.5f);
+                HandleMovement(sprintSpeed, 3f, 2.5f);
                 animSpeed = Mathf.Lerp(animSpeed, 2, Time.deltaTime * coolDownSpeed);
             }
         }
@@ -92,7 +83,7 @@ public class Movement : MonoBehaviour
         }
         if (isCrouch)
         {
-            HandleMovement(sprintSpeed, 1.5f, 1.5f);
+            HandleMovement(crouchSpeed, 1.5f, 1.5f);
             animSpeed = Mathf.Lerp(animSpeed, 0, Time.deltaTime * coolDownSpeed);
         }
     }
